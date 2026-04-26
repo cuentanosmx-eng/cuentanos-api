@@ -12,13 +12,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Server via SFTP
-        uses: appleboy/sftp-action@v0.2.0
-        with:
-          host: ${{ secrets.HOSTINGER_HOST }}
-          port: ${{ secrets.HOSTINGER_PORT }}
-          username: ${{ secrets.HOSTINGER_USER }}
-          password: ${{ secrets.HOSTINGER_PASSWORD }}
-          upload_dir: /public_html
-          local_dir: ./
-          empty_dir: false
+      - name: Upload via FTP
+        run: |
+          curl -T v1.php -T .htaccess \
+            ftp://${{ secrets.HOSTINGER_USER }}:${{ secrets.HOSTINGER_PASSWORD }}@${{ secrets.HOSTINGER_HOST }}:21/public_html/ \
+            --ftp-pasv
