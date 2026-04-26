@@ -8,12 +8,19 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Upload via FTP
-        run: |
-          curl -T v1.php -T .htaccess \
-            ftp://${{ secrets.HOSTINGER_USER }}:${{ secrets.HOSTINGER_PASSWORD }}@${{ secrets.HOSTINGER_HOST }}:21/public_html/ \
-            --ftp-pasv
+      - name: Deploy via FTPS
+        uses: peaceiris/actions-ftp@v3
+        with:
+          server: ${{ secrets.HOSTINGER_HOST }}
+          port: 21
+          username: ${{ secrets.HOSTINGER_USER }}
+          password: ${{ secrets.HOSTINGER_PASSWORD }}
+          local_dir: ./
+          remote_dir: /public_html
+          allow_empty_dirs: false
+          force_ftp: true
